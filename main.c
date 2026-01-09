@@ -16,20 +16,20 @@
 int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
 
 // helper functions
-void shiftCacheContentsDown(int []);
-void floatCacheContent(int [], int);
+void shiftCacheContentsDown(int[]);
+void floatCacheContent(int[], int);
 int findIndex(int cache[], int value);
 
 // page replacement algorithms
-void inputFIFO(int input, int cache[], int _counter[]) {};
+int inputFIFO(int input, int cache[], int _counter[]) { return -1; };
 
-void inputLFU(int input, int cache[], int counter[]) {};
+int inputLFU(int input, int cache[], int counter[]) { return -1; };
 
-void inputLRU(int input, int cache[], int _counter[]) {};
+int inputLRU(int input, int cache[], int _counter[]) { return -1; };
 
 int main() {
 
-  void (*processInput)(int inputValue, int cache[], int counter[]);
+  int (*processInput)(int inputValue, int cache[], int counter[]);
 
   // assume the cache is holding pointers instead of ints,
   // negative values represent null
@@ -48,7 +48,7 @@ int main() {
 
   printf("Select number: ");
   scanf("%d", &algoSelection);
-  
+
   switch (algoSelection) {
   case 1: {
     processInput = &inputFIFO;
@@ -73,9 +73,11 @@ int main() {
 
   printf("The algorithm you selected is %s\n\n", algoName);
 
+  int hitIndex = -1;
+
   for (int i = 0; i < inputSize; i++) {
     // process the input
-    processInput(input[i], cache, counter);
+    hitIndex = processInput(input[i], cache, counter);
 
     printf("Iteration %d: input = %d\n", i, input[i]);
 
@@ -98,13 +100,16 @@ int main() {
       else
         printf("|\t%d \t|", cache[j]);
 
-      if (algoSelection != 2)
-        continue;
-
-      if (counter[j] <= 0)
-        printf("       --\t|");
-      else
-        printf("       %d\t|", counter[j]);
+      if (algoSelection == 2) {
+        if (counter[j] <= 0)
+          printf("       --\t|");
+        else
+          printf("       %d\t|", counter[j]);
+      }
+    
+      if (hitIndex == j) {
+        printf(" HIT!"); 
+      }  
     }
     printf("\n ---------------");
 
@@ -120,24 +125,24 @@ int main() {
 // shifts the entire cache down, removes the last item from cache
 void shiftCacheContentsDown(int cache[]) {
   for (int i = CACHE_SIZE - 1; i > 0; i--) {
-    cache[i] = cache[i-1];
+    cache[i] = cache[i - 1];
   }
-  
+
   cache[0] = -1;
 }
 
 // shifts the content in cache[index] to the top of the cache
 void floatCacheContent(int cache[], int index) {
-  if (index >= CACHE_SIZE || index < 0){ 
+  if (index >= CACHE_SIZE || index < 0) {
     printf("Error! Invalid index %d", index);
     return;
   }
-  
+
   int temp, i;
 
-  for (i=index; i > 0; i--) {
-    temp = cache[i-1];
-    cache[i-1] = cache[i];
+  for (i = index; i > 0; i--) {
+    temp = cache[i - 1];
+    cache[i - 1] = cache[i];
     cache[i] = temp;
   }
 }
@@ -145,7 +150,8 @@ void floatCacheContent(int cache[], int index) {
 int findIndex(int cache[], int value) {
 
   for (int i = 0; i < CACHE_SIZE; i++) {
-    if (cache[i] == value) return i;
+    if (cache[i] == value)
+      return i;
   }
 
   return -1;
