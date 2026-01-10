@@ -19,6 +19,7 @@ int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
 void shiftCacheContentsDown(int[]);
 void floatCacheContent(int[], int);
 int findIndex(int cache[], int value);
+int findLowestCountIndex(int counter[]);
 
 // page replacement algorithms
 int inputFIFO(int input, int cache[], int _counter[]) { return -1; };
@@ -32,9 +33,9 @@ int main() {
   int (*processInput)(int inputValue, int cache[], int counter[]);
 
   // assume the cache is holding pointers instead of ints,
-  // negative values represent null
-  int cache[CACHE_SIZE] = {1, -2, -4};
-  int counter[CACHE_SIZE] = {1, 20, 0};
+  // value of -1 represent null
+  int cache[CACHE_SIZE] = {-1, -1, -1};
+  int counter[CACHE_SIZE] = {0, 0, 0};
 
   int inputSize = sizeof(input) / sizeof(input[0]);
 
@@ -155,4 +156,17 @@ int findIndex(int cache[], int value) {
   }
 
   return -1;
+}
+
+int findLowestCountIndex(int counter[]){
+  int index = 0, lowest = counter[0], i;
+
+  for (i = 1; i < CACHE_SIZE; i++) {
+    if (counter[i] < lowest) {
+      lowest = counter[i];
+      index = i;
+    }
+  }
+
+  return index;
 }
