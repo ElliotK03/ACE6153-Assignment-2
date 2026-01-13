@@ -14,19 +14,107 @@
 // index 0 is the start (top) of the cache
 
 int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
-
+// int input[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
+ 
 // helper functions
 void shiftCacheContentsDown(int[]);
 void floatCacheContent(int[], int);
 int findIndex(int cache[], int value);
-int findLowestCountIndex(int counter[]);
+int findLowestCountIndex(int counter[], int * tie);
+void updateLastWrittenIndex(int index);
+
+// global variable
+int lastWrittenIndices[CACHE_SIZE] = {-1, -1, -1};
 
 // page replacement algorithms
-int inputFIFO(int input, int cache[], int _counter[]) { return -1; };
+int processInputFIFO(int input, int cache[], int _counter[]) {
+  int index = findIndex(cache, input);
 
-int inputLFU(int input, int cache[], int counter[]) { return -1; };
+  // find hit
+  if (index >= 0) {
+    return index;
+  }
 
-int inputLRU(int input, int cache[], int _counter[]) { return -1; };
+  // handle miss
+  index = findIndex(cache, -1); 
+  if (index >= 0) {
+    cache[index] = input;
+    updateLastWrittenIndex(index);
+
+    return -1;
+  } else {
+    index = lastWrittenIndices[CACHE_SIZE - 1];
+
+    cache[index] = input;
+    updateLastWrittenIndex(index);
+
+    return -1;
+  }
+
+  return -1;
+}
+
+int processInputLFU(int input, int cache[], int counter[]) {
+  int index, tie;
+
+// find hit
+  index = findIndex(cache, input); 
+  if (index >= 0) {
+    counter[index] += 1;
+    
+    return index;
+  }
+
+// find empty slot
+  index = findIndex(cache, -1); 
+  if (index >= 0) {
+    cache[index] = input;
+    counter[index] = 1;
+
+    updateLastWrittenIndex(index);
+    
+    return -1;
+  }
+// vacate page with lowest count, and handle ties
+  index = findLowestCountIndex(counter, &tie);
+  
+  if (tie == 0) {
+    cache[index] = input;
+    counter[index] = 1;
+    updateLastWrittenIndex(index);
+  } else {
+    int countToVacate = counter[index];
+
+    for (int i =(CACHE_SIZE - 1); i > 0; i--) {
+      if (counter[lastWrittenIndices[i]] == countToVacate) {
+        cache[lastWrittenIndices[i]] = input;
+        counter[lastWrittenIndices[i]] = 1;
+        floatCacheContent(lastWrittenIndices, i);
+        break;
+      } else continue;
+    }
+  }
+  return -1;
+}
+
+int processInputLRU(int input, int cache[], int _counter[]) {
+// check for hit
+  int index = findIndex(cache, input);
+  if (index >=0) {
+    floatCacheContent(cache, index);
+    return 0;
+  }
+
+// handle miss
+  if (cache[0] < 0) {
+    cache[0] = input;
+  
+  } else {
+    shiftCacheContentsDown(cache);
+    cache[0] = input;
+  }
+  return -1;
+}
 
 int main() {
 
@@ -52,17 +140,17 @@ int main() {
 
   switch (algoSelection) {
   case 1: {
-    processInput = &inputFIFO;
+    processInput = &processInputFIFO;
     strcpy(algoName, "FIFO");
     break;
   }
   case 2: {
-    processInput = &inputLFU;
+    processInput = &processInputLFU;
     strcpy(algoName, "LFU");
     break;
   }
   case 3: {
-    processInput = &inputLRU;
+    processInput = &processInputLRU;
     strcpy(algoName, "LRU");
     break;
   }
@@ -158,8 +246,9 @@ int findIndex(int cache[], int value) {
   return -1;
 }
 
-int findLowestCountIndex(int counter[]){
+int findLowestCountIndex(int counter[], int * tie){
   int index = 0, lowest = counter[0], i;
+  *tie = 0;
 
   for (i = 1; i < CACHE_SIZE; i++) {
     if (counter[i] < lowest) {
@@ -168,5 +257,19 @@ int findLowestCountIndex(int counter[]){
     }
   }
 
+  for (i = i; i > 0; i--) {
+    if (i == index) continue;
+
+    if (counter[i] == lowest) *tie = 1;
+  }
+  
   return index;
 }
+
+void updateLastWrittenIndex(int index) {
+
+  shiftCacheContentsDown(lastWrittenIndices);
+
+  lastWrittenIndices[0] = index;
+}
+
