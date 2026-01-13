@@ -17,8 +17,8 @@ int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
 // int input[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
  
 // helper functions
-void shiftCacheContentsDown(int[]);
-void floatCacheContent(int[], int);
+void shiftArrayContentsDown(int[]);
+void floatArrayContent(int[], int);
 int findIndex(int cache[], int value);
 int findLowestCountIndex(int counter[], int * tie);
 void updateLastWrittenIndex(int index);
@@ -89,7 +89,7 @@ int processInputLFU(int input, int cache[], int counter[]) {
       if (counter[lastWrittenIndices[i]] == countToVacate) {
         cache[lastWrittenIndices[i]] = input;
         counter[lastWrittenIndices[i]] = 1;
-        floatCacheContent(lastWrittenIndices, i);
+        floatArrayContent(lastWrittenIndices, i);
         break;
       } else continue;
     }
@@ -101,7 +101,7 @@ int processInputLRU(int input, int cache[], int _counter[]) {
 // check for hit
   int index = findIndex(cache, input);
   if (index >=0) {
-    floatCacheContent(cache, index);
+    floatArrayContent(cache, index);
     return 0;
   }
 
@@ -110,7 +110,7 @@ int processInputLRU(int input, int cache[], int _counter[]) {
     cache[0] = input;
   
   } else {
-    shiftCacheContentsDown(cache);
+    shiftArrayContentsDown(cache);
     cache[0] = input;
   }
   return -1;
@@ -129,6 +129,8 @@ int main() {
 
   int algoSelection = 0;
   char algoName[5];
+
+  int hitCount = 0;
 
   printf("Select Page Replacement Algorithm: \n");
   printf("1. FIFO \n");
@@ -198,6 +200,7 @@ int main() {
     
       if (hitIndex == j) {
         printf(" HIT!"); 
+        hitCount++;
       }  
     }
     printf("\n ---------------");
@@ -208,11 +211,13 @@ int main() {
     printf("\n\n");
   }
 
+  printf("\nHit count is %d", hitCount);
+
   return 0;
 }
 
 // shifts the entire cache down, removes the last item from cache
-void shiftCacheContentsDown(int cache[]) {
+void shiftArrayContentsDown(int cache[]) {
   for (int i = CACHE_SIZE - 1; i > 0; i--) {
     cache[i] = cache[i - 1];
   }
@@ -221,7 +226,7 @@ void shiftCacheContentsDown(int cache[]) {
 }
 
 // shifts the content in cache[index] to the top of the cache
-void floatCacheContent(int cache[], int index) {
+void floatArrayContent(int cache[], int index) {
   if (index >= CACHE_SIZE || index < 0) {
     printf("Error! Invalid index %d", index);
     return;
@@ -268,7 +273,7 @@ int findLowestCountIndex(int counter[], int * tie){
 
 void updateLastWrittenIndex(int index) {
 
-  shiftCacheContentsDown(lastWrittenIndices);
+  shiftArrayContentsDown(lastWrittenIndices);
 
   lastWrittenIndices[0] = index;
 }
