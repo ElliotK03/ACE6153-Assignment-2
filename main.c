@@ -259,7 +259,7 @@ int findLowestCountIndex(int counter[], int *tie) {
     }
   }
 
-  for (i = i; i > 0; i--) {
+  for (i -= 1; i > 0; i--) {
     if (i == index)
       continue;
 
