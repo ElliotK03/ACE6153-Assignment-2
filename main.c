@@ -15,12 +15,12 @@
 
 int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
 // int input[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
- 
+
 // helper functions
 void shiftArrayContentsDown(int[]);
 void floatArrayContent(int[], int);
 int findIndex(int cache[], int value);
-int findLowestCountIndex(int counter[], int * tie);
+int findLowestCountIndex(int counter[], int *tie);
 void updateLastWrittenIndex(int index);
 
 // global variable
@@ -36,7 +36,7 @@ int processInputFIFO(int input, int cache[], int _counter[]) {
   }
 
   // handle miss
-  index = findIndex(cache, -1); 
+  index = findIndex(cache, -1);
   if (index >= 0) {
     cache[index] = input;
     updateLastWrittenIndex(index);
@@ -57,27 +57,25 @@ int processInputFIFO(int input, int cache[], int _counter[]) {
 int processInputLFU(int input, int cache[], int counter[]) {
   int index, tie;
 
-// find hit
-  index = findIndex(cache, input); 
+  // find hit
+  index = findIndex(cache, input);
   if (index >= 0) {
     counter[index] += 1;
-    
     return index;
   }
 
-// find empty slot
-  index = findIndex(cache, -1); 
+  // find empty slot
+  index = findIndex(cache, -1);
   if (index >= 0) {
     cache[index] = input;
     counter[index] = 1;
 
     updateLastWrittenIndex(index);
-    
     return -1;
   }
-// vacate page with lowest count, and handle ties
+  // vacate page with lowest count, and handle ties
   index = findLowestCountIndex(counter, &tie);
-  
+
   if (tie == 0) {
     cache[index] = input;
     counter[index] = 1;
@@ -85,7 +83,7 @@ int processInputLFU(int input, int cache[], int counter[]) {
   } else {
     int countToVacate = counter[index];
 
-    for (int i =(CACHE_SIZE - 1); i > 0; i--) {
+    for (int i = (CACHE_SIZE - 1); i > 0; i--) {
       if (counter[lastWrittenIndices[i]] == countToVacate) {
         cache[lastWrittenIndices[i]] = input;
         counter[lastWrittenIndices[i]] = 1;
@@ -98,17 +96,16 @@ int processInputLFU(int input, int cache[], int counter[]) {
 }
 
 int processInputLRU(int input, int cache[], int _counter[]) {
-// check for hit
+  // check for hit
   int index = findIndex(cache, input);
-  if (index >=0) {
+  if (index >= 0) {
     floatArrayContent(cache, index);
     return 0;
   }
 
-// handle miss
+  // handle miss
   if (cache[0] < 0) {
     cache[0] = input;
-  
   } else {
     shiftArrayContentsDown(cache);
     cache[0] = input;
@@ -197,11 +194,11 @@ int main() {
         else
           printf("       %d\t|", counter[j]);
       }
-    
+
       if (hitIndex == j) {
-        printf(" HIT!"); 
+        printf(" HIT!");
         hitCount++;
-      }  
+      }
     }
     printf("\n ---------------");
 
@@ -251,7 +248,7 @@ int findIndex(int cache[], int value) {
   return -1;
 }
 
-int findLowestCountIndex(int counter[], int * tie){
+int findLowestCountIndex(int counter[], int *tie) {
   int index = 0, lowest = counter[0], i;
   *tie = 0;
 
@@ -263,11 +260,14 @@ int findLowestCountIndex(int counter[], int * tie){
   }
 
   for (i = i; i > 0; i--) {
-    if (i == index) continue;
+    if (i == index)
+      continue;
 
-    if (counter[i] == lowest) *tie = 1;
+    if (counter[i] == lowest) {
+      *tie = 1;
+    }
   }
-  
+
   return index;
 }
 
@@ -277,4 +277,3 @@ void updateLastWrittenIndex(int index) {
 
   lastWrittenIndices[0] = index;
 }
-
