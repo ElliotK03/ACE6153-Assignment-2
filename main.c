@@ -13,7 +13,11 @@
 // Cache is modeled using an array,
 // index 0 is the start (top) of the cache
 
-int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
+const int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
+#define INPUT_SIZE sizeof(input) / sizeof(input[0])
+
+int displayArr[INPUT_SIZE][CACHE_SIZE] = {0};
+
 // int input[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
 
 // helper functions
@@ -122,8 +126,6 @@ int main() {
   int cache[CACHE_SIZE] = {-1, -1, -1};
   int counter[CACHE_SIZE] = {0, 0, 0};
 
-  int inputSize = sizeof(input) / sizeof(input[0]);
-
   int algoSelection = 0;
   char algoName[5];
 
@@ -163,7 +165,7 @@ int main() {
 
   int hitIndex = -1;
 
-  for (int i = 0; i < inputSize; i++) {
+  for (int i = 0; i < INPUT_SIZE; i++) {
     // process the input
     hitIndex = processInput(input[i], cache, counter);
 
@@ -206,9 +208,22 @@ int main() {
       printf("----------------");
 
     printf("\n\n");
+
+    // Insert values to the input buffer
+    for (int j = 0; j < CACHE_SIZE; j++) {
+      displayArr[i][j] = cache[j];
+    }
   }
 
-  printf("\nHit count is %d", hitCount);
+  printf("History:\n");
+
+  for(int i = 0; i < CACHE_SIZE; i++){
+    for(int j = 0; j < INPUT_SIZE; j++){
+      printf("%d\t", displayArr[j][i]);
+    }
+    printf("\n");
+  }
+  printf("\nHit count is %d\n", hitCount);
 
   return 0;
 }
