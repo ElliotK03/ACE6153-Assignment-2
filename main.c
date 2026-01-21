@@ -7,12 +7,14 @@
 // 6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 #define CACHE_SIZE 3
 // Cache is modeled using an array,
 // index 0 is the start (top) of the cache
 
+// const int input [] = {6, 6, 6, 6, 1};
 const int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
 #define INPUT_SIZE sizeof(input) / sizeof(input[0])
 
@@ -215,11 +217,23 @@ int main() {
     }
   }
 
-  printf("History:\n");
+  bool hit = false;
+
+  printf("Input:\n");
+  for (int a = 0; a < INPUT_SIZE; a++) {
+    printf("%d\t", input[a]);
+  }
+  
+  printf("\nHistory:\n");
 
   for(int i = 0; i < CACHE_SIZE; i++){
     for(int j = 0; j < INPUT_SIZE; j++){
-      printf("%d\t", displayArr[j][i]);
+      hit = (j >= 1 && input[j] == displayArr[j-1][i]) ? true: false;
+
+      printf("%d", displayArr[j][i]);
+      if (hit)
+        printf("(Hit!)");
+      printf("\t");
     }
     printf("\n");
   }
