@@ -16,7 +16,7 @@
 
 // const int input [] = {6, 6, 6, 6, 1};
 const int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
-#define INPUT_SIZE sizeof(input) / sizeof(input[0])
+#define INPUT_SIZE (sizeof(input) / sizeof(input[0]))
 
 int displayArr[INPUT_SIZE][CACHE_SIZE] = {0};
 
