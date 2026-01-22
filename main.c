@@ -40,15 +40,11 @@ int processInputFIFO(int input, int cache[], int _[]) {
   if (index >= 0) {
     cache[index] = input;
     updateLastWrittenIndex(index);
-
-    return -1;
   } else {
     index = lastWrittenIndices[CACHE_SIZE - 1];
 
     cache[index] = input;
     updateLastWrittenIndex(index);
-
-    return -1;
   }
 
   return -1;
@@ -310,3 +306,4 @@ void updateLastWrittenIndex(int index) {
   shiftArrayContentsDown(lastWrittenIndices);
   lastWrittenIndices[0] = index;
 }
+
