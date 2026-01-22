@@ -3,26 +3,20 @@
 // Task A
 // Group 4
 
-// input string
-// 6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7
-
 #include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
+#include <string.h>
 
 #define CACHE_SIZE 3
 // Cache is modeled using an array,
 // index 0 is the start (top) of the cache
 
-// const int input [] = {6, 6, 6, 6, 1};
 const int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
 #define INPUT_SIZE (int)(sizeof(input) / sizeof(input[0]))
 
 int displayArr[INPUT_SIZE][CACHE_SIZE] = {0};
 
-// int input[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
-
-// helper functions
+// helper functions declaration
 void shiftArrayContentsDown(int[]);
 void floatArrayContent(int[], int);
 int findIndex(int cache[], int value);
@@ -97,8 +91,8 @@ int processInputLFU(int input, int cache[], int counter[]) {
         break;
       } else
         continue;
-    }
-  }
+    } // for loop
+  } // else block
   return -1;
 }
 
@@ -135,9 +129,9 @@ int main() {
   int hitCount = 0;
 
   printf("Select Page Replacement Algorithm: \n");
-  printf("1. FIFO \n");
-  printf("2. LFU \n");
-  printf("3. LRU \n");
+  printf("1. First In First Out (FIFO) \n");
+  printf("2. Least Frequently Used (LFU) \n");
+  printf("3. Least Recently Used (LRU) \n");
 
   printf("Select number: ");
   scanf("%d", &algoSelection);
@@ -309,13 +303,10 @@ int findLowestCountIndex(int counter[], int *tie) {
       *tie = 1;
     }
   }
-
   return index;
 }
 
 void updateLastWrittenIndex(int index) {
-
   shiftArrayContentsDown(lastWrittenIndices);
-
   lastWrittenIndices[0] = index;
 }
