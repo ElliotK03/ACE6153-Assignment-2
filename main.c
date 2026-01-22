@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
+#include <string.h>
 
 #define CACHE_SIZE 3
 // Cache is modeled using an array,
@@ -16,7 +16,7 @@
 
 // const int input [] = {6, 6, 6, 6, 1};
 const int input[] = {6, 3, 5, 2, 5, 6, 3, 5, 9, 0, 0, 1, 2, 4, 7};
-#define INPUT_SIZE (sizeof(input) / sizeof(input[0]))
+#define INPUT_SIZE (int)(sizeof(input) / sizeof(input[0]))
 
 int displayArr[INPUT_SIZE][CACHE_SIZE] = {0};
 
@@ -33,7 +33,7 @@ void updateLastWrittenIndex(int index);
 int lastWrittenIndices[CACHE_SIZE] = {-1, -1, -1};
 
 // page replacement algorithms
-int processInputFIFO(int input, int cache[], int _counter[]) {
+int processInputFIFO(int input, int cache[], int _[]) {
   int index = findIndex(cache, input);
 
   // find hit
@@ -95,13 +95,14 @@ int processInputLFU(int input, int cache[], int counter[]) {
         counter[lastWrittenIndices[i]] = 1;
         floatArrayContent(lastWrittenIndices, i);
         break;
-      } else continue;
+      } else
+        continue;
     }
   }
   return -1;
 }
 
-int processInputLRU(int input, int cache[], int _counter[]) {
+int processInputLRU(int input, int cache[], int _[]) {
   // check for hit
   int index = findIndex(cache, input);
   if (index >= 0) {
@@ -217,23 +218,35 @@ int main() {
     }
   }
 
-  bool hit = false;
+  bool cached = false;
 
   printf("Input:\n");
   for (int a = 0; a < INPUT_SIZE; a++) {
     printf("%d\t", input[a]);
   }
-  
+
   printf("\nHistory:\n");
 
-  for(int i = 0; i < CACHE_SIZE; i++){
-    for(int j = 0; j < INPUT_SIZE; j++){
-      hit = (j >= 1 && input[j] == displayArr[j-1][i]) ? true: false;
+  for (int i = 0; i < CACHE_SIZE; i++) {
+    for (int j = 0; j < INPUT_SIZE; j++) {
+      if (displayArr[j][i] == -1) {
+        printf("--");
+      } else {
+        printf("%d", displayArr[j][i]);
+      }
 
-      printf("%d", displayArr[j][i]);
-      if (hit)
+      for (int h = 0; h < CACHE_SIZE; h++) {
+        cached = ((j >= 1 && input[j] == displayArr[j - 1][h]) || cached)
+                     ? true
+                     : false;
+        if (cached)
+          break;
+      }
+
+      if (cached && input[j] == displayArr[j][i])
         printf("(Hit!)");
       printf("\t");
+      cached = false;
     }
     printf("\n");
   }
