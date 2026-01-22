@@ -79,7 +79,7 @@ int processInputLFU(int input, int cache[], int counter[]) {
   } else {
     int countToVacate = counter[index];
 
-    for (int i = (CACHE_SIZE - 1); i > 0; i--) {
+    for (int i = (CACHE_SIZE - 1); i >= 0; i--) {
       if (counter[lastWrittenIndices[i]] == countToVacate) {
         cache[lastWrittenIndices[i]] = input;
         counter[lastWrittenIndices[i]] = 1;
@@ -306,4 +306,5 @@ void updateLastWrittenIndex(int index) {
   shiftArrayContentsDown(lastWrittenIndices);
   lastWrittenIndices[0] = index;
 }
+
 
